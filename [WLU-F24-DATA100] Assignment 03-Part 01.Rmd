@@ -76,7 +76,8 @@ at_cyclone <- str_c(cyclone_data_address, at_cyclone_filename, sep = "") |>
     separate_wider_delim(
         cols = `4`,
         # Set the delim and the names
-        # YOUR CODE HERE
+        delim = ",", 
+        names = new_columns
     ) |>
     mutate(
         across(everything(), str_trim),
@@ -95,17 +96,17 @@ at_cyclone <- str_c(cyclone_data_address, at_cyclone_filename, sep = "") |>
     separate_wider_position(
         BasinNumberYear,
         # Specify the widths
-        # YOUR CODE HERE
+        widths=c("Basin"=2, "Number"=2, "NameYear"=4)
     ) |>
     separate_wider_position(
         `1`,
         # Specify the widths
-        # YOUR CODE HERE
+        widths = c("ObservYear"=4, "Month"=2, "Day"=2)
     ) |>
     separate_wider_position(
         `2`,
         # Specify the widths
-        # YOUR CODE HERE
+        widths = c("Hour"=2, "Minute"=2)
     ) |>
     rename(
         Identifier = `3`
