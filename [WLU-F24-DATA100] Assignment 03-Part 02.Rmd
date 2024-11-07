@@ -29,16 +29,6 @@ library(arrow)
 ```
 
 
-# Instructions
-
-You are encouraged to remove this instruction section prior to submission.
-
-It is recommended that you follow the structure of this template. The text is all placeholder - you are free to change any/all wording as you please, but it is very helpful for the grading process if you keep the same structure. Anything in <<double angle brackets>> definitely needs to be changed, but you are free to change any/all sentences!
-
-Note that all of the code is *hidden* by default. This file will be graded based on the insights, not the code.
-
-You will only submit the PDF version of this document. To knit to PDF, you'll need to run `install.packages("tinytex")` in the console, followed by `tinytex::install_tinytex()` (DO NOT PUT THESE COMMANDS IN AN RMD FILE!!!). If you encounter errors in "Knit to PDF", you can "knit to html" and then print the html file to PDF using your operating system's PDF view (e.g. Adobe Acrobat). Only standalone PDF files will be accepted by MyLS.
-
 # Abstract
 
 General context, very brief data descriptions, techniques used, and general conclusions, all contained within a single, concise paragraph.
@@ -162,10 +152,4 @@ The limitations of this analysis are as follows. (Do not simply list potential i
 
 # References
 
-I am not strict about MLA or APA style or anything like that. For this report, I would much rather have your citations be easy to match to your insights.
-
-The easiest way is to use Rmd's [footnote](https://bookdown.org/yihui/rmarkdown/markdown-syntax.html#inline-formatting) syntax. This will put a number beside the word where the footnote appears, and the full text of the footnote at the bottom of the page (pdf) or end of the document (html). The syntax is:^[See the source view to see this footnote], where I suggest that you put in something like this^[The relevance to the insight is ... . From <<name of source and name of article>>, published on <<date>>, url: <<link to page>>] to make references for this assignment.
-
-Alternatively, you could make a list of citations with their main arguments and why they're relevent to your insights, methods, etc.
-
-The link above also references "bibtex" files. These are also extremely convenient, but have a steep learning curve and they make it difficult to tie them to an insight. If you use bibtext, then make sure that you provide a sentence to describe the source and it's relevance when you cite it - don't just add citations to the end of a sentence (this is common practice in academia, but I want to know that your citations are directly relevant for this assignmnet).
+*Add if needed*
