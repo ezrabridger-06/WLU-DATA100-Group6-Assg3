@@ -1,5 +1,5 @@
 ---
-title: "Exploring Disparate Data: Part 1"
+title: "Assignment 3 - Exploring Disparate Data: Part 1"
 author: "Group Number: 6"
 date: "Due November 12th"
 ---
@@ -24,9 +24,6 @@ library(openxlsx)
 - Quan Tran (169108890)
 - Yutong Xie (203199360)
 - Anie Zhu (169083968)
-
-
-**Division of data cleaning parts**
 
 
 ## NOAA data for Atlantic and Pacific Basin
