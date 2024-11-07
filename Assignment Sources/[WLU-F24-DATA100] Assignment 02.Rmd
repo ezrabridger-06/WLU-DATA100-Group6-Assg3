@@ -1,0 +1,796 @@
+---
+title: "Assignment 2"
+author: "STUDENT NUMBER: 169108890"
+date: "2024-10-22"
+output:
+  pdf_document: default
+editor_options:
+  chunk_output_type: inline
+---
+
+```{r active="", eval=FALSE}
+# BEGIN ASSIGNMENT 
+```
+
+```{r setup, include=FALSE, message=FALSE}
+knitr::opts_chunk$set(echo = TRUE, error = TRUE)
+library(tidyverse)
+library(openxlsx)
+```
+
+# Project 2. Importing and tidying data
+
+## Overview
+
+In this project, we will import four data sets from various file formats, perform some tidying up of the imported data, and do a little bit of exploration. We will need to understand the structures of the data as we tidy them.
+
+## Import NOAA storm data (`.csv`)
+
+The [NOAA hurricane data](https://www.nhc.noaa.gov/data/hurdat) up to year 2022 is in `.csv` format. The updated data description is at [NOAA](https://www.nhc.noaa.gov/data/hurdat/hurdat2-format-nencpac-1949-2021.pdf) and a more up-to-date webpage is [here](https://www.aoml.noaa.gov/hrd/data_sub/newHURDAT.html).
+
+**Question 1**: Load with placeholder column names.
+
+First we load the data as `.csv` and see what we get. The first four columns each contain multiple types of information, so for now we'll just give them placeholder names which will be changed later.
+
+Use the `col_names` argument to give the first four columns the names 1, 2, 3, and 4, as character values.
+
+```{r atl_cyclone_data_address, error=TRUE, warning=FALSE, tags=c()}
+atl_cyclone_data_address <- "https://www.nhc.noaa.gov/data/hurdat/hurdat2-1851-2022-050423.txt"
+atl_cyclone_2022_raw <- atl_cyclone_data_address |>
+  read_csv(
+    col_names = c("1", "2", "3", "4")
+  )
+
+atl_cyclone_2022_raw
+```
+
+```{r}
+. = ottr::check("tests/atl_cyclone_data_address.R")
+```
+
+The format at least looks correct. The column `4` definitely needs to be split into multiple columns.
+
+**Question 2**: Separate `4` wider by deliminator.
+
+Based on the documentation, the fields are separated by `,`, so we can use this to make the split using the `separate_wider_delim()` function. The new column names, based on the documentation, are given in the `new_columns` variable.
+
+It is also good practice to trim all the string values after separation, which is done for you in the code below.
+
+*Note that, in R, "4" is not a valid name, so you must surround it in back ticks (on the same key as the "\~" on most keyboards, to the left of the 1 key).*
+
+```{r atl_cyclone_2022_update1, error=TRUE, tags=c()}
+new_columns <- c("status", "latitude", "longitude", "max_wind", "min_pressure", "NE_extend_34", "SE_extend_34", "SW_extend_34", "NW_extend_34", "NE_extend_50", "SE_extend_50", "SW_extend_50", "NW_extend_50", "NE_extend_64", "SE_extend_64", "SW_extend_64", "NW_extend_64", "r_max_wind")
+atl_cyclone_2022_update1 <- atl_cyclone_2022_raw |>
+  separate_wider_delim(
+    cols = `4`,
+    delim = ",",
+    names = new_columns
+  ) |> 
+  mutate(
+    across(everything(), str_trim)
+  )
+
+atl_cyclone_2022_update1
+```
+
+```{r}
+. = ottr::check("tests/atl_cyclone_2022_update1.R")
+```
+
+We notice that many values are `-999`, which cannot be right. Indeed, they denote missing values. We should update the data frame to reflect this.
+
+**Question 3**: Replace *all* instances of `-999` in the data (not just in a single column) with `NA`.
+
+Functions used in the solution:
+
+-   `mutate()`
+-   `across()` (including the "purr-style formula" (`~` notation) in some of the [examples](https://dplyr.tidyverse.org/reference/across.html)).
+-   `everything()`
+-   `na_if()`
+
+There are other ways to solve this problem, though!
+
+```{r atl_cyclone_2022_update2, error=TRUE, tags=c()}
+atl_cyclone_2022_update2 <- atl_cyclone_2022_update1 |>
+  mutate(
+    across(everything(), ~ na_if(., "-999"))
+  )
+
+atl_cyclone_2022_update2
+```
+
+```{r}
+. = ottr::check("tests/atl_cyclone_2022_update2.R")
+```
+
+We look at this preliminary result.
+
+```{r atl_cyclone_2022_update2_no_change, error=TRUE}
+# Nothing to change here
+atl_cyclone_2022_update2 |>
+  select(`1`, `2`, `3`, status) |>
+  head(n = 17)
+```
+
+From the above, we see that
+
+-   In the first row:
+    -   In column `1`, the first entry is the name of the hurricane, `AAL011851`.
+        -   This name tells us that this is the first hurricane (01) of the year 1851.
+    -   In column `2`, the word `UNNAMED` appears.
+    -   In column `3`, we get a 14. This is the number of entries for this particular hurricane.
+    -   In the `status` column, there's an NA
+-   The next 14 rows all pertain to this same hurricane:
+    -   Column `1` are the dates - 18510625 is 1851/06/25, i.e. June 25, 1851.
+    -   Column `2` are the times of the observations. Notice that when it rolls bach over to 0000 in row 7, the date in column `1` has gone up by one.
+    -   It's not yet clear what column `3` is.
+    -   The `status` is **only** `NA` for the row with the definition of the hurricane. All other rows tell us what kind of storm it was (`HU` for hurricane, `TS` for tropical storm, etc.)
+    -   Notice that column `3` has the number `14` as the first value, then there were 14 rows for that hurricane! We'll use this to check our work later.
+
+This is not in tidy form and we should tidy it up. We notice that the rows that contain only the identifying information have `NA` values in the `status` column.
+
+**Question 4:** Separate the names and `fill()` the `NA`s.
+
+The process is to:
+
+-   ~~Create three new columns with proper names to capture the identifying information of the storms, specifically `BasinNumberYear`, `Name`, and `Entries`.~~
+    -   ~~`BasinNumberYear` will be the value in `1` if `status` is NA, and `BasinNumberYear` will be NA when `status` isn't NA.~~
+        -   ~~The name hits at its contents: It tells us which "basin" (atlantic or pacific), the "number" of the storm (01 is the first storm), and the "year".~~
+    -   ~~`Name` and `Entries` will be similar, but using the values in `2` and `3`, respectively, whenever `status` is `NA`~~
+-   ~~For our convenience, use the `relocate()` function to move `BasinNumberYear`, `Name`, and `Entries` to be the first three columns in the dataframe.~~
+    -   (The `select()` function can also be used to create an identical data frame.)
+-   ~~Then propagate the values down (using the `fill()` function) so that each row corresponding to the same storm gets the same identifying information.~~
+    -   The `fill()` function will scroll down the columns that you specify, and every time it sees an `NA` it will `fill` it with the value above it.\
+        *For `BasinNumberYear`, the first row was taken from `1` (the name), and then the rest of the values are `NA`. `fill()` will copy down the Basin/Number/Year until it sees a non-`NA` value.*
+    -   The `fill()` function can fill multiple columns at once.
+-   ~~Lastly, get rid of the original rows that only contained the identifying information (the rows where `status` is `NA`).~~
+
+Functions used in the solution:
+
+-   `mutate()` with `if_else()` statements to create three new columns based on columns `1`, `2`, and `3`.
+-   `is.na(status)` inside the `if_else()` statement.
+-   `fill()` to propagate the values to the row below.
+-   `filter()` to remove `status` values that are `NA`
+-   `relocate()` to put the three new columns at the start of the df.
+
+```{r atl_cyclone_2022_update3, error=TRUE, tags=c()}
+atl_cyclone_2022_update3 <- atl_cyclone_2022_update2 |>
+  mutate(
+    BasinNumberYear = if_else(is.na(status), `1`, NA),
+    Name = if_else(is.na(status), `2`, NA),
+    Entries = if_else(is.na(status), `3`, NA)
+  ) |> 
+  relocate(BasinNumberYear, Name, Entries) |> 
+  fill(
+    c(BasinNumberYear, Name, Entries),
+    # .direction = "down"
+  ) |> 
+  filter(!is.na(status))
+
+atl_cyclone_2022_update3
+```
+
+```{r}
+. = ottr::check("tests/atl_cyclone_2022_update3.R")
+```
+
+We check our work so far, to make sure nothing is messed up by previous operations. The value of `Entries` should coincide with the number of rows recording information on the same cyclone. If there is any point where `Entries` was, say, 14, and there is some other number than 14 rows, then there was a problem.
+
+We *expect* the following code to give: `A tibble: 0 × 25`. If you get something else, you must re-check your code!
+
+```{r atl_cyclone_2022_update3_no_change, error=TRUE}
+# Nothing to change here
+# This **SHOULD** result in "A tibble: 0 x 25" if your code above worked.
+atl_cyclone_2022_update3 |>
+  group_by(BasinNumberYear, Name, Entries) |>
+  mutate(
+    count_wrong = (Entries != n())
+  ) |>
+  filter(count_wrong)
+```
+
+Next, create the detailed date and time information for the observations, by splitting the columns `BasinNumberYear` and `1`. Some cyclone gets named in one year (in column `BasinNumberYear`), but last long enough to be observed in the year after (in column `1`). Thus we should distinguish the two different types of years: The first one (from `BasinNumberYear`) will be `NameYear`, while the second one (from `1`) will be `ObservYear`.
+
+**Question 5**: Separate `BasinNumberYear` to be the columns `Basin`, `Number`, `NameYear`, and separate the column labelled `1` to be `ObservYear`, `Month` and `Day`.
+
+Note that `BasinNumberYear` has the following structure:
+
+-   The first two digits are the Basin.
+-   The next two digits are the Number.
+-   The last four digits are the Year.
+
+Similarly, `1` has "year, month, day" as 4 digits, 2 digits, and 2 digits respectively.
+
+Use `separate_wider_position()` twice to separate values in BasinNumberYear and `1` according to the numbers of digits.
+
+```{r atl_cyclone_2022_update4, error=TRUE, tags=c()}
+atl_cyclone_2022_update4 <- atl_cyclone_2022_update3 |>
+  select(-Entries) |> # Due to the sanity check, `Entries` column is redundant
+  separate_wider_position(
+    cols = BasinNumberYear,
+    widths = c("Basin" = 2, "Number" = 2, "NameYear" = 4)
+  ) |> 
+  separate_wider_position(`1`, c("ObservYear" = 4, "Month" = 2, "Day" = 2))
+
+atl_cyclone_2022_update4
+```
+
+```{r}
+. = ottr::check("tests/atl_cyclone_2022_update4.R")
+```
+
+We can see that indeed there are cyclones that went across years. This is why we have two different definitions of "year"!
+
+```{r atl_cyclone_2022_update4_no_change, error=TRUE}
+# Nothing to change here
+atl_cyclone_2022_update4 |>
+  filter(NameYear != `ObservYear`)
+```
+
+Now we can finish reassigning the column names and types according to the data description.
+
+**Question 6**: Separate column `2` into `Hour` and `Minute`, and rename column `3` to the more meaningful `Identifier`, according to the documentation.
+
+Again, use `separate_wider_position()`, as well as `rename()`.
+
+```{r atl_cyclone_2022_update5, error=TRUE, tags=c()}
+atl_cyclone_2022_update5 <- atl_cyclone_2022_update4 |>
+  separate_wider_position(`2`, c("Hour" = 2, "Minute" = 2)) |> 
+  rename("Identifier" = `3`)
+
+atl_cyclone_2022_update5
+```
+
+```{r}
+. = ottr::check("tests/atl_cyclone_2022_update5.R")
+```
+
+Now we'll parse the obvious numeric columns to the correct types.
+
+**Question 7**: The columns `NameYear`, `ObservYear`, `Month`, `Day`, `Hour`, `Minute`, and `Number` should be integers, while the columns starting with `max_wind` should be doubles ("`numeric`").
+
+You can either mutate each column individually, or you could save a ton of typing and use `mutate(across(c(...), ...))`.
+
+```{r atl_cyclone_2022_tidy, error=TRUE, tags=c()}
+atl_cyclone_2022_tidy <- atl_cyclone_2022_update5 |>
+  mutate(
+    across(
+      c("Number", "NameYear", "ObservYear", "Month", "Day", "Hour", "Minute"),
+      ~ as.integer(.)
+    ),
+    across(
+      max_wind:last_col(), 
+      ~ as.double(.)
+    )
+  )
+
+atl_cyclone_2022_tidy
+```
+
+```{r}
+. = ottr::check("tests/atl_cyclone_2022_tidy.R")
+```
+
+We now have a tidy data set! Let's get some insights!
+
+First we'll look at `max_wind`, by sorting it from smallest to largest.
+
+```{r atl_cyclone_2022_tidy_no_change, error=TRUE}
+# Nothing to change here
+atl_cyclone_2022_tidy |>
+  arrange(max_wind) |>
+  relocate(max_wind)
+```
+
+It turns out that there are rows with `-99` as values for `max_wind`! It cannot be reasonable and must represent missing values.
+
+**Question 8**: Convert all the `-99` values in `max_wind` to `NA`.
+
+You do not need the "purr-style syntax" used above, this is just a simple `mutate()` question.
+
+```{r atl_cyclone_2022, error=TRUE, tags=c()}
+atl_cyclone_2022 <- atl_cyclone_2022_tidy |>
+  mutate(max_wind = na_if(max_wind, -99)) |> 
+  relocate(max_wind)
+
+atl_cyclone_2022
+```
+
+```{r}
+. = ottr::check("tests/NOAAStorm7.R")
+```
+
+We verify that indeed `-99` becomes `NA`:
+
+```{r error=TRUE}
+# Nothing to change here
+atl_cyclone_2022 |>
+  filter(Basin == "AL", Number == 3, NameYear == 1971) |>
+  relocate(max_wind)
+```
+
+The data is in much better shape and we should save all the work as a `parquet` file, so that we do not have to go through the whole process again.
+
+**Question 9**: Use the `write_parquet()` function from the `arrow` library to save as a "parquet" file.
+
+```{r save_parquet, error=TRUE, tags=c()}
+library(arrow)
+save_name <- "hurdat2-1851-2022.parquet"
+
+write_parquet(atl_cyclone_2022, save_name)
+```
+
+Then we read it back just to make sure:
+
+```{r read_parquet_no_change, error=TRUE}
+# Nothing to change here
+read_parquet(save_name)
+```
+
+In the HURDAT description, they reference an [educational exercise](https://serc.carleton.edu/eslabs/hurricanes/3.html) using the data. In it, they make this ugly, ugly plot:
+
+![](https://cdn.serc.carleton.edu/images/eslabs/hurricanes/atlantic_named_hurricanes_1900.webp)
+
+**Question 10**: Remake the plot above using the `atl_cyclone_2022` data.
+
+-   ~~The plot should go from 1900 to 2006.~~
+-   The x-axis should be the name year.
+-   The y-axis should show the number of named storms in the Atlantic basin in that year.
+    -   ~~"`UNNAMED`" values should be removed before counting.~~
+    -   R will count for you (don't specify the `y` value in `aes()`), but ~~you have to make sure that the data only contain the distinct values of Name within each NameYear (*Hint*: you will not use `n_distinct`).~~
+-   ~~Use the same labels as the linked image.~~
+-   You do not need to add the horizontal line.
+
+Note that the final plot that I describe above does not quite match the one shown.
+
+```{r atl_cyclone_2022_bar, tags=c()}
+atl_cyclone_2022_bar <- atl_cyclone_2022 |>
+  # Only keep named storms from 1900 to 2006
+  # Make sure the counts calculated by geom_bar are correct.
+  
+  filter((Name != "UNNAMED") & (NameYear >= 1900 & NameYear <= 2006)) |> 
+  group_by(NameYear) |> 
+  distinct(Name) |> 
+  ggplot(mapping = aes(x = NameYear)) +
+  geom_bar(
+    fill = "lightblue",
+    color = "black"
+  ) + 
+  labs(
+    title = "Atlantic Named Storms",
+    subtitle = "1900 to 2006",
+    caption = "Data from NOAA hurricane HURDAT2",
+    x = "Year",
+    y = "Hurricanes, Tropical and Subtropical Storms"
+  ) +
+  theme_bw() +
+  theme(
+    plot.title = element_text(face = "bold", color = "darkblue", hjust = 0.5),
+    plot.subtitle = element_text(face = "bold", color = "skyblue4", hjust = 0.5),
+    plot.caption = element_text(face = "italic"),
+    axis.title = element_text(face = "bold", size = 9)
+  )
+
+atl_cyclone_2022_bar
+```
+
+```{r}
+. = ottr::check("tests/atl_cyclone_2022_bar.R")
+```
+
+That's the end of the cyclone data! It started off *very* difficult to work with, but our cleaning efforts put it in tidy format!
+
+## Import Facebook Climate Opinion Data (`.xlsx`)
+
+The following works with the public data provided by Meta (formerly Facebook). Citation:
+
+```         
+Data for Good at Meta and the Yale Program on Climate Change Communication. 2022. Climate Change Opinion Survey. Accessed DAY MONTH YEAR.
+```
+
+First, check out the names of the sheets in the file
+
+```{r climate_sheet_names, error=TRUE}
+climate_opinion_address <- "https://data.humdata.org/dataset/dc9f2ca4-8b62-4747-89b1-db426ce617a0/resource/6041db5f-8190-47ff-a10b-9841325de841/download/climate_change_opinion_survey_2022_aggregated.xlsx"
+
+climate_sheet_names <- climate_opinion_address |>
+  loadWorkbook() |>
+  names()
+
+climate_sheet_names
+```
+
+The `Readme` and `Codebook` sheets describe the data. Take a look at them first. In particular
+
+-   The `Readme` sheet contains overall information about the origin of the data and how to cite it
+-   The `Codebook` sheet contains information about the questions and answers associated to variables in more details.
+
+Both are useful information to have and the following blocks load and display them.
+
+```{r climate_readme, error=TRUE}
+# load the Readme sheet
+sheet_name <- "Readme"
+
+climate_readme <- climate_opinion_address |>
+  read.xlsx(
+    sheet = sheet_name,
+  )
+
+climate_readme
+```
+
+```{r climate_codebook, error=TRUE}
+# load the Codebook sheet
+sheet_name <- "Codebook"
+
+climate_codebook <- climate_opinion_address |>
+  read.xlsx(
+    sheet = sheet_name,
+  )
+
+climate_codebook
+```
+
+In this part, we load the first two data sheets, "climate_awareness", and "climate_happening", into their respective dataframes, tidy then combine them into one single dataframe. Let's start with the "climate_awareness" sheet.
+
+```{r climate_awareness_raw, error=TRUE}
+aware_sheet_name <- "climate_awareness"
+
+climate_awareness_raw <- climate_opinion_address |>
+  read.xlsx(
+    sheet = aware_sheet_name
+  )
+
+climate_awareness_raw
+```
+
+It does not seem to be in tidy form. We need to tidy it up. Moreover, it looks like the whole table should be *transposed*, meaning, columns should have been rows and rows should have been columns. We will need to do this in a few steps.
+
+```{r climate_awareness_update1, error=TRUE}
+climate_awareness_update1 <- climate_awareness_raw |>
+  pivot_longer(
+    cols = !contains(aware_sheet_name),
+    names_to = "country",
+    values_to = "score"
+  )
+
+climate_awareness_update1
+```
+
+The dataframe above is in fact tidy. On the other hand, there are more than one sheets and we are planning to put a few sheets into a single dataframe. It is better that we have one row for each country for the sheets to be joined together, even though it may mean a less tidy dataframe.
+
+Make the values in the `climate_awareness` column more like variable names, in preparation for the final pivoting:
+
+```         
+       "I have never heard of it" ---> "aware_no"
+       "I know a little about it" ---> "aware_alittle"
+       "I know a moderate amount about it" ---> "aware_moderate"
+       "I know a lot about it" ---> "aware_alot"
+       "Refused" ---> "aware_refuse"
+       "(Unweighted Base)" ---> "aware_base"
+```
+
+and rename the column `climate_awareness` to `answer`. It is not absolutely necessary to rename the column, while it facilitates iteration if we are to work on all the sheets.
+
+```{r climate_awareness_update2, error=TRUE}
+climate_awareness_update2 <- climate_awareness_update1 |>
+  mutate(
+    climate_awareness = case_when(
+      climate_awareness == "I have never heard of it" ~ "aware_no",
+      climate_awareness == "I know a little about it" ~ "aware_alittle",
+      climate_awareness == "I know a moderate amount about it" ~ "aware_moderate",
+      climate_awareness == "I know a lot about it" ~ "aware_alot",
+      climate_awareness == "Refused" ~ "aware_refuse",
+      climate_awareness == "(Unweighted Base)" ~ "aware_base"
+    )
+  ) |>
+  rename(answer = climate_awareness)
+
+climate_awareness_update2
+```
+
+Now finish the transposition of the table.
+
+```{r climate_awareness, error=TRUE}
+climate_awareness <- climate_awareness_update2 |>
+  pivot_wider(
+    names_from = answer,
+    values_from = score
+  )
+
+climate_awareness
+```
+
+Next, we do the same procedure for "climate_happening" sheet, putting all the steps above into one block.
+
+The values in the column `climate_happening` is converted to following names of the columns in the final dataframe:
+
+```         
+       "Yes" ---> "happening_yes",
+       "No" ---> "happening_no",
+       "Don't know" ---> "happening_dontknow",
+       "Refused" ---> "happening_refuse",
+       "(Unweighted Base)" ---> "happening_base"
+```
+
+Again, change the column name `climate_happening` to `answer`, and finish the transposition of the table.
+
+```{r climate_happening, error=TRUE, tags=c()}
+happening_sheet_name <- "climate_happening"
+
+climate_happening_raw <- climate_opinion_address |>
+  # Read in the sheet name
+  read.xlsx(happening_sheet_name)
+
+
+climate_happening_update1 <- climate_happening_raw |>
+  # Pivot longer
+  pivot_longer(
+    cols = - happening_sheet_name,
+    names_to = "country",
+    values_to = "score"
+  )
+
+
+climate_happening_update2 <- climate_happening_update1 |>
+  # Change climate_happening to be happeing_yes, happening_no, etc.
+  mutate(
+    climate_happening = case_when(
+      climate_happening == "Yes" ~ "happening_yes",
+      climate_happening == "No" ~ "happening_no",
+      climate_happening == "Don't know" ~ "happening_dontknow",
+      climate_happening == "Refused" ~ "happening_refuse",
+      climate_happening == "(Unweighted Base)" ~ "happening_base",
+    )
+  ) |> 
+  rename(answer = climate_happening)
+
+
+climate_happening <- climate_happening_update2 |>
+  # Now pivot wider again
+  pivot_wider(
+    names_from = answer,
+    values_from = score
+  )
+
+climate_happening
+```
+
+```{r}
+. = ottr::check("tests/climate_happening.R")
+```
+
+Lastly, we join the two sheets together by the `country` names as follows. The result is a collection of scores from both sheets. Similar procedure can be used to load the rest of the sheets and put them together into the same dataframe for future analysis.
+
+```{r climate_opinion_sheets, error=TRUE}
+# Nothing to change here
+climate_opinion_sheets <- climate_awareness |>
+  full_join(
+    climate_happening,
+    by = join_by(country)
+  )
+
+climate_opinion_sheets
+```
+
+You last question is to make an insight from these data!
+
+Calculate at least one summary statistic and create at least one plot that gives you some information about the proportion of people that are **aware of the definition of climate change** and the proportion that **believe it is happening** (must include both).
+
+The rubric is below.
+
+-   2 marks: Calculated a summary statistic that isn't just the mean of a column.
+-   2 marks: Interpreted the summary statistic correctly.
+-   4 marks: Make an interesting plot.
+-   2 marks: Interpret the plots in the context of the study.
+
+If you only use the data for "awareness" (or only for "happening") then you can only get half marks on this question.
+
+Two bonus marks are available if you do something interesting with the data preparation, such as joining the data together in a different way or pivoting the data to make the plot easier.
+
+```{r}
+# Final question
+
+# ----------Changes----------
+# Clean up some parts of data
+climate_opinion_sheets_touchup <- climate_opinion_sheets |> 
+  mutate(
+    # Change "." in country names with actual space character(s)
+    # Remove any whitespace(s) if present
+    country = str_trim(str_replace_all(country, "\\.", " ")),
+    
+    across(where(is.numeric), ~ round(., digits = 2)), # Round all values to 2 dp
+    aware_high = aware_moderate + aware_alot # Combine moderate and a lot awareness into
+                                             # one level (of response)
+  ) |> 
+  relocate(aware_high, .after = aware_alot) # Arrange column into appropriate position
+
+climate_opinion_sheets_touchup
+
+# ----------Statistics----------
+# Measure correlation between different awareness levels and happening responses
+cor_data <- climate_opinion_sheets_touchup |> 
+  summarize(
+    cor_high_yes = cor(aware_high, happening_yes, use = "complete.obs"),
+    cor_high_no = cor(aware_high, happening_no, use = "complete.obs"),
+    cor_little_dontknow = cor(aware_alittle, happening_dontknow, use = "complete.obs"),
+    cor_no_dontknow = cor(aware_no, happening_dontknow, use = "complete.obs"),
+    cor_refuse = cor(aware_refuse, happening_refuse, use = "complete.obs")
+  ) |> 
+  mutate(
+    across(everything(), ~ round(., 2)) # Rounding for consistency
+  )
+
+cor_data
+
+# ----------Plot----------
+# Preparation: Acquire some data points for plotting and labelling later
+aware_happening_central_tendency <- climate_opinion_sheets_touchup |> 
+  summarize(
+    mean_aware_high = mean(aware_high, na.rm = TRUE),
+    mean_happening_yes = mean(happening_yes, na.rm = TRUE),
+    median_aware_high = median(aware_high, na.rm = TRUE),
+    median_happening_yes = median(happening_yes, na.rm = TRUE)
+  ) |> 
+  mutate(
+    across(everything(), ~ round(., 2)) # Rounding for consistency
+  )
+
+# Result: The plot
+climate_aware_happening_plot <- climate_opinion_sheets_touchup |> 
+  
+  # Defining plot and mapping
+  ggplot(aes(x = aware_high, y = happening_yes)) +
+  
+  # Data points from the table to see distribution of y vs. x
+  geom_jitter(
+    alpha = 0.2,
+    color = "blue"
+  ) +
+  
+  # Line of best fit to evaluate relationship
+  geom_smooth(
+    method = "lm",
+    formula = y ~ x,
+    color = "salmon",
+    se = FALSE
+  ) +
+  
+  # Vertical and horizontal lines to aid visual of mean point
+  # Horizontal
+  geom_segment(
+    data = aware_happening_central_tendency,
+    mapping = aes(
+      x = -Inf,
+      xend = mean_aware_high,
+      y = mean_happening_yes,
+      yend = mean_happening_yes
+    ),
+    color = "orange"
+  ) +
+  # Vertical
+  geom_segment(
+    data = aware_happening_central_tendency,
+    mapping = aes(
+      x = mean_aware_high,
+      xend = mean_aware_high,
+      y = -Inf,
+      yend = mean_happening_yes
+    ),
+    color = "orange"
+  ) +
+  
+  # Mean point plot and label
+  # Plot
+  geom_point(
+    data = aware_happening_central_tendency,
+    mapping = aes(x = mean_aware_high, y = mean_happening_yes),
+    color = "darkorange"
+  ) +
+  # Label
+  geom_text(
+    data = aware_happening_central_tendency,
+    mapping = aes(
+      x = mean_aware_high,
+      y = mean_happening_yes,
+      label = str_c("Mean (", mean_aware_high, ", ", mean_happening_yes, ")")
+    ),
+    size = 7,
+    size.unit = "pt",
+    nudge_y = -0.4,
+    nudge_x = 6.3
+  ) +
+  
+  # Vertical and horizontal lines to aid visual of median point
+  # Horizontal
+  geom_segment(
+    data = aware_happening_central_tendency,
+    mapping = aes(
+      x = -Inf,
+      xend = median_aware_high,
+      y = median_happening_yes,
+      yend = median_happening_yes
+    ),
+    color = "lightgreen"
+  ) +
+  # Vertical
+  geom_segment(
+    data = aware_happening_central_tendency,
+    mapping = aes(
+      x = median_aware_high,
+      xend = median_aware_high,
+      y = -Inf,
+      yend = median_happening_yes
+    ),
+    color = "lightgreen"
+  ) +
+  
+  # Median point plot and label
+  # Plot
+  geom_point(
+    data = aware_happening_central_tendency,
+    mapping = aes(x = median_aware_high, y = median_happening_yes),
+    color = "darkgreen"
+  ) +
+  # Label
+  geom_text(
+    data = aware_happening_central_tendency,
+    mapping = aes(
+      x = median_aware_high,
+      y = median_happening_yes,
+      label = str_c("Median (", median_aware_high, ", ", median_happening_yes, ")")
+    ),
+    size = 7,
+    size.unit = "pt",
+    nudge_y = 0.4,
+    nudge_x = 6.3
+  ) +
+  
+  # Visual clarity
+  scale_x_continuous(
+    breaks = seq(20, 95, 5)
+  ) +
+  scale_y_continuous(
+    breaks = seq(65, 100, 5)
+  ) +
+  labs(
+    title = "Climate Change: Distribution of People Believing vs. High Awareness",
+    subtitle = "* High awareness is moderate and 'a lot' of awareness percentage combined",
+    x = "High Awareness (%)",
+    y = "Believed Climate Change is Happening (%)",
+    caption = "Data for Good at Meta and the Yale Program on Climate Change Communication. 2022.\nClimate Change Opinion Survey. Accessed 18 October 2024."
+  ) +
+  theme_bw() +
+  theme(
+    plot.title = element_text(size = 12, color = "darkblue", face = "bold"),
+    plot.subtitle = element_text(size = 8, face = "italic"),
+    axis.title.y = element_text(size = 9, face = "bold"),
+    axis.title.x = element_text(size = 11, face = "bold"),
+    plot.caption = element_text(size = 6),
+    axis.line = element_line(linewidth = 0.7),
+    panel.grid = element_line(color = "gray90", linewidth = 0.3),
+    panel.border = element_blank()
+  )
+
+climate_aware_happening_plot
+```
+
+**Statistics Interpretation**: In general,
+
+-   If one refused to answer one survey, they are likely to not do so for the other survey as well.
+
+-   There is a higher possibility for a person to not know that climate change is happening if they never heard about it than if they heard about it little about it
+
+-   For people that at least know moderately about climate change, a higher chance that they believe climate change is happening than it is not.
+
+**Plot Interpretation**:
+
+-   From the plot, it can be said that the correlation between high awareness and believe climate change is happening is correct as there is a matching positive linear relationship (i.e. 'happening' increases as high awareness increases)
+
+-   From the median and mean visualizations, it can be seen that high awareness has a negative skewness and 'happening' has a positive skewness, which can be supported from the distribution of data points (clustered on the lower half on x-axis and upper half on y-axis, respectively).
+
+-   In context, as people have better awareness in climate change, they would also realize that it is an ongoing thing and an existing phenomenon.
+
+```{r active="", eval=FALSE}
+# END ASSIGNMENT 
+```
