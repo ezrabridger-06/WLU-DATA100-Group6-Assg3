@@ -1,0 +1,30 @@
+# Testing of objects in Assignment 3 Part 1
+# whenever a pull request or commit (merge) is made
+# Assisted by Gemini (Google AI)
+
+name: ottr Tests
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Load root directory into working directory
+        uses: actions/checkout@v3
+
+      - name: Set up R
+        uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: '4.4.1' # Latest version
+
+      - name: Install Dependencies
+        run: |
+          Rscript -e "install.packages(c('ottr', 'tinytest', 'testthat'), repos = 'https://cloud.r-project.org/')"
+
+      - name: Run ottr Tests
+        run: |
+          Rscript -e "library(ottr); library(tinytest); library(testthat); test_dir('tests')"
+        
