@@ -21,11 +21,9 @@ library(openxlsx)
 
 List all group members here:
 
-- 
-- 
-- 
-- 
-- 
+- Quan Tran (169108890)
+- Yutong Xie (203199360)
+- Anie Zhu (169083968)
 
 This file will be submitted as an Rmd file to GradeScope. You will need to create a group on GradeScope with the correct members. *If the person who submits this does not list you, you will not get a grade on this assignment!!!* Make sure you trust the person who is submitting it!
 
