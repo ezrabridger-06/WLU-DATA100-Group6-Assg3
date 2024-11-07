@@ -1,3 +1,6 @@
+# GROUP NOTE: Any lines with "# YOUR CODE HERE" in the Rmd file, please remove them when adding your code. Keep all other comments unless otherwise noted as well
+
+
 **PART 1**
 
 This file will be submitted as an Rmd file to GradeScope. You will need to create a group on GradeScope with the correct members. *If the person who submits this does not list you, you will not get a grade on this assignment!!!* Make sure you trust the person who is submitting it!
@@ -16,6 +19,8 @@ Once you've completed the relevant sections, you will have the following files i
 4. `covid_2020.parquet` contains the total reported cases of COVID-19 in the year 2020 for all countries.
     - It also, quite helpfully, includes the continent on which each country sits, which can be joined with other data frames (with some care).
 5. `happiness.parquet` contains information about the happiness of countries in the world, as measured by the `life_ladder` question (among other survey responses).
+
+
 
 **PART 2**
 
