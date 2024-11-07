@@ -25,22 +25,6 @@ library(openxlsx)
 - Yutong Xie (203199360)
 - Anie Zhu (169083968)
 
-This file will be submitted as an Rmd file to GradeScope. You will need to create a group on GradeScope with the correct members. *If the person who submits this does not list you, you will not get a grade on this assignment!!!* Make sure you trust the person who is submitting it!
-
- Overview
-
-This is **Part 1** of the group assignment, in which you'll demonstrate your ability to clean the data sets.
-
-In this part, you will prepare the following data sets for analysis in Part 2. Note that you'll only need to use three of them, so you can focus on those three for cleaning and get started on Part 2.
-
-Once you've completed the relevant sections, you will have the following files in your working directory:
-
-1. `cyclones_data.parquet` contains data for hurricane strength in both the Atlantic and North Pacific basins.
-2. `ice_extent_yearly.parquet` contains the yearly ice extent for the Arctic and the Antarctic poles.
-3. `climate_awareness.parquet` contains the proportion of people from each country who answered "no", "a little", ... to a question asking about their awareness of the actual definitions of climate change.
-4. `covid_2020.parquet` contains the total reported cases of COVID-19 in the year 2020 for all countries.
-    - It also, quite helpfully, includes the continent on which each country sits, which can be joined with other data frames (with some care).
-5. `happiness.parquet` contains information about the happiness of countries in the world, as measured by the `life_ladder` question (among other survey responses).
 
 **Division of data cleaning parts**
 
