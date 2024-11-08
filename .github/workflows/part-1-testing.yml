@@ -34,15 +34,15 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          Rscript -e "install.packages(c('ottr', 'tinytest', 'testthat', 'tidyverse'), repos = 'https://cran.rstudio.com/')"
+          Rscript -e "install.packages(c('ottr', 'tinytest', 'testthat', 'dplyr', 'readr'), repos = 'https://cran.rstudio.com/')"
 
       - name: Run ottr Tests and Publish Report
         run: |
-          Rscript -e "library(ottr); library(tinytest); library(testthat); library(tidyverse); test_dir('[WLU-F24-DATA100] Assignment 03-Part 01.Rmd'); ottr::publish_report(file = 'ottr_report.html')"
+          Rscript -e "library(ottr); library(tinytest); library(testthat); library(dplyr); library(readr); test_dir('[WLU-F24-DATA100] Assignment 03-Part 01.Rmd'); ottr::publish_report(file = 'ottr_report.html')"
         if: ${{ always() }} # Always run this step, even if previous steps fail
 
       - name: Upload Report Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ottr-report
           path: ottr_report.html
