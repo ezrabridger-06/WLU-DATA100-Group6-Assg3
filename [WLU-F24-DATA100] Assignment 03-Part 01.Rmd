@@ -340,7 +340,10 @@ In the chunk below, find the maximum and minimum sea ice extent for each year (b
 
 ```{r}
 ice_extent_yearly <- ice_extent_daily |>
-    # YOUR CODE HERE
+    group_by(year, region) |>
+  summarise(min = min(ice_extent), max = max(ice_extent), .groups = "drop") |>
+  pivot_longer(cols = c(min, max), names_to = "name", values_to = "value") |>
+  select(year, region, name, value) 
 
 ice_extent_yearly
 ```
