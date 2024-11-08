@@ -46,13 +46,15 @@ jobs:
             any::testthat
             any::dplyr
             any::readr
-          needs: check
+          needs: |
+            website
+            coverage
 
       - name: Get current directory
         run: pwd
 
       - name: Run Tests and Get Report
-        run: Rscript -e "test_dir('./tests'); ottr::publish_report(file = 'ottr_report.html')"
+        run: Rscript -e "library(ottr); library(tinytest); library(testthat); library(dplyr); library(reader); test_dir('./tests'); ottr::publish_report(file = 'ottr_report.html')"
 
       - name: Upload Report Artifact
         uses: actions/upload-artifact@v4
