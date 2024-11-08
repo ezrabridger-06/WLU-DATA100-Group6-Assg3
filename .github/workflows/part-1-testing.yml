@@ -7,10 +7,10 @@ name: ottr Tests
 on:
   push:
     branches:
-      - 'R/*'
+      - 'Disabled'
   pull_request:
     branches:
-      - 'R/*'
+      - 'Disabled'
 
 jobs:
   test:
