@@ -1,5 +1,6 @@
 # Testing of objects in Assignment 3 Part 1
 # whenever a pull request or commit (merge) is made
+# to one of the data set branches
 # Assisted by Gemini (Google AI)
 
 name: ottr Tests
@@ -17,7 +18,7 @@ jobs:
 
     steps:
       - name: Load root directory into working directory
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up R
         uses: r-lib/actions/setup-r@v2
