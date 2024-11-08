@@ -1,0 +1,45 @@
+# Update all branches
+# whenever main is pushed
+
+name: ottr Tests
+on:
+  push:
+    branches: main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Update
+        run: |
+          git config --local user.email "actions@github.com"
+          git config --local user.name "Github Actions"
+          git fetch origin
+          git checkout R/Pt-1-Data-set-1
+          git merge origin/main
+          git push origin R/Pt-1-Data-set-1
+          git checkout R/Pt-1-Data-set-2
+          git merge origin/main
+          git push origin R/Pt-1-Data-set-2
+          git checkout R/Pt-1-Data-set-3
+          git merge origin/main
+          git push origin R/Pt-1-Data-set-3
+          git checkout R/Pt-1-Data-set-4
+          git merge origin/main
+          git push origin R/Pt-1-Data-set-4
+          git checkout R/Pt-1-Data-set-5
+          git merge origin/main
+          git push origin R/Pt-1-Data-set-5
+          git checkout Pt-1-General
+          git merge origin/main
+          git push origin Pt-1-General
+          git checkout Pt-2-General
+          git merge origin/main
+          git push origin Pt-2-General
+          git checkout Pt-2-EDA
+          git merge origin/main
+          git push origin Pt-2-EDA
+          git checkout Pt-2-Data-sets
+          git merge origin/main
+          git push origin Pt-2-Data-sets
