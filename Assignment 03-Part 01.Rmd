@@ -178,7 +178,7 @@ To do this, you must choose whether to use `ObservYear` or `NameYear`.
 ```{r cyclones_data_update_2, error=TRUE}
 cyclones_data_update_2 <- cyclones_data_update_1 |>
     mutate(
-        # YOUR CODE HERE
+        # YOUR CODE HERE.
     )
 
 print(cyclones_data_update_2)
