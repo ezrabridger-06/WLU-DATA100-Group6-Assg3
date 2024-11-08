@@ -1,10 +1,10 @@
 # Update all branches
 # whenever main is pushed
 
-name: ottr Tests
+name: Update branches
 on:
   push:
-    branches: main
+    branches: 'Disabled'
 
 jobs:
   test:
