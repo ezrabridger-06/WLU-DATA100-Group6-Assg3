@@ -43,7 +43,6 @@ jobs:
           extra-packages: |
             any::ottr
             any::tinytest
-            any::testthat
             any::dplyr
             any::readr
           needs: |
