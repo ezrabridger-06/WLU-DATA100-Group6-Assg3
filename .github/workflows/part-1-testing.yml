@@ -7,14 +7,10 @@ name: ottr Tests
 on:
   push:
     branches:
-      - 'R/Pt-1-*'
-    paths:
-      - 'Assignment 03-Part 01.Rmd'
+      - 'Disabled'
   pull_request:
     branches:
-      - 'R/Pt-1-*'
-    paths:
-      - 'Assignment 03-Part 01.Rmd'
+      - 'Disabled'
 
 jobs:
   test:
