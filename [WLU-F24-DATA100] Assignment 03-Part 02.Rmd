@@ -5,17 +5,12 @@ date: "November 12th, 2024"
 output: pdf_document
 ---
 
-List your group members, including their student numbers, here:
+**Group members**:
 
-- John K. Samson (#########)
-- John Darnielle (#########)
-- Craig Finn (#########)
-- Joel Plaskett (########)
-- Ezra Furman (#########)
+- Quan Tran (169108890)
+- Yutong Xie (203199360)
+- Anie Zhu (169083968)
 
-You **must** be in a group in MyLS in order to see the DropBox used for submission. Even if you're alone, you must join a group by yourself.
-
-You **must** be in a group with people from the same section as you. MyLS does not allow for groups including students from both Data100A and Data100B.
 
 ```{r setup, include=FALSE}
 # echo = FALSE will set the Rmd to *not* show the R code. Don't change this.
@@ -42,13 +37,6 @@ If needed, this paragraph is more information about the context.
 In this report, we are going to explore some aspects climate change and the impact and/or perceptions of it by using exploratory techniques. We'll explore <<general description of data>> using <<general description of techniques>>.
 
 By the end of this report, we will have shown ...
-
-
-
-
-
-
-
 
 
 # Data Description
@@ -99,9 +87,6 @@ In order to clean the data, we <<steps to clean the data, concise but precise en
 Explain how any combinations of data were performed. Explain what kind of join was needed, whether columns had to be modified (for example, matching "country" names.)
 
 
-
-
-
 # Exploratory Data Analysis
 
 To achieve our goals, we explored the data by...
@@ -139,6 +124,7 @@ Finally, \@ref(fig:insight3) shows ...
 
 ```{r insight3, fig.height=4, fig.width=6, fig.cap="This is a figure caption that you will need to change in order to get good marks in the visualization rubric items."}
 ```
+
 
 # Conclusion and Future Work
 
