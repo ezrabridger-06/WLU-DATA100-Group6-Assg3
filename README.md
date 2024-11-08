@@ -1,7 +1,18 @@
-# GROUP NOTE: Any lines with "# YOUR CODE HERE" in the Rmd file, please remove them when adding your code. Keep all other comments unless otherwise noted as well
+# GROUP NOTE: 
+- For any lines with `# YOUR CODE HERE` in the Rmd file, please remove them when adding your code. Keep all other comments unless otherwise noted as well
+- Remember to not copy and paste the entire file on your side, as it might mess with the setup done here. Just copy the objects (`object_a <- ...`) that you did
+- When adding your code/editing the file, select the respective branch (e.g. Pt-1-Data-set-1) from the branch list on the top left
+    + Pt-1-General and Pt-2-General are for non-R code or misc changes to the files
+    + After adding/editing, press _Commit changes_ on the top right, keep the _Commit message_ short (use _Extended description_ if needed) and leave the _Commit directly to the `<name>` branch selected_
+- If you write the parquet and have the file on your computer, upload it to the Assignment Sources folder in that branch
+- If you are stuck or need help in the middle of your code:
+    + Edit and commit as above then on the branch page
+    + Click on _Compare and pull request_ on the yellow banner on top
+    + Add details and click _Create pull request_ so we can go in to discuss and still be able to further edit that part
 
 
-**PART 1**
+_(Extracted from the template Rmd files)_
+# PART 1
 
 This file will be submitted as an Rmd file to GradeScope. You will need to create a group on GradeScope with the correct members. *If the person who submits this does not list you, you will not get a grade on this assignment!!!* Make sure you trust the person who is submitting it!
 
@@ -22,13 +33,15 @@ Once you've completed the relevant sections, you will have the following files i
 
 
 
-**PART 2**
+# PART 2
+
+## Important
 
 You **must** be in a group in MyLS in order to see the DropBox used for submission. Even if you're alone, you must join a group by yourself.
 
 You **must** be in a group with people from the same section as you. MyLS does not allow for groups including students from both Data100A and Data100B.
 
-# Instructions
+## Instructions
 
 You are encouraged to remove this instruction section prior to submission.
 
@@ -38,11 +51,11 @@ Note that all of the code is *hidden* by default. This file will be graded based
 
 You will only submit the PDF version of this document. To knit to PDF, you'll need to run `install.packages("tinytex")` in the console, followed by `tinytex::install_tinytex()` (DO NOT PUT THESE COMMANDS IN AN RMD FILE!!!). If you encounter errors in "Knit to PDF", you can "knit to html" and then print the html file to PDF using your operating system's PDF view (e.g. Adobe Acrobat). Only standalone PDF files will be accepted by MyLS.
 
-# References
+## References
 
 I am not strict about MLA or APA style or anything like that. For this report, I would much rather have your citations be easy to match to your insights.
 
-The easiest way is to use Rmd's [footnote](https://bookdown.org/yihui/rmarkdown/markdown-syntax.html#inline-formatting) syntax. This will put a number beside the word where the footnote appears, and the full text of the footnote at the bottom of the page (pdf) or end of the document (html). The syntax is:^[See the source view to see this footnote], where I suggest that you put in something like this^[The relevance to the insight is ... . From <<name of source and name of article>>, published on <<date>>, url: <<link to page>>] to make references for this assignment.
+The easiest way is to use Rmd's `[footnote](https://bookdown.org/yihui/rmarkdown/markdown-syntax.html#inline-formatting)` syntax. This will put a number beside the word where the footnote appears, and the full text of the footnote at the bottom of the page (pdf) or end of the document (html). The syntax is: ^[See the source view to see this footnote], where I suggest that you put in something like this ^[The relevance to the insight is ... . From <<name of source and name of article>>, published on <<date>>, url: <<link to page>>] to make references for this assignment.
 
 Alternatively, you could make a list of citations with their main arguments and why they're relevent to your insights, methods, etc.
 
