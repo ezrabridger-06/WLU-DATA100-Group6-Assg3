@@ -7,10 +7,22 @@ name: ottr Tests
 on:
   push:
     branches:
-      - 'R/*'
+      - 'R/Pt-1-*'
+    paths:
+      - 'R/Pt-1-Data-set-1/\[WLU-F24-DATA100\] Assignment 03-Part 01.Rmd'
+      - 'R/Pt-1-Data-set-2/\[WLU-F24-DATA100\] Assignment 03-Part 01.Rmd'
+      - 'R/Pt-1-Data-set-3/\[WLU-F24-DATA100\] Assignment 03-Part 01.Rmd'
+      - 'R/Pt-1-Data-set-4/\[WLU-F24-DATA100\] Assignment 03-Part 01.Rmd'
+      - 'R/Pt-1-Data-set-5/\[WLU-F24-DATA100\] Assignment 03-Part 01.Rmd'
   pull_request:
     branches:
-      - 'R/*'
+      - 'R/Pt-1-*'
+    paths:
+      - 'R/Pt-1-Data-set-1/\[WLU-F24-DATA100\] Assignment 03-Part 01.Rmd'
+      - 'R/Pt-1-Data-set-2/\[WLU-F24-DATA100\] Assignment 03-Part 01.Rmd'
+      - 'R/Pt-1-Data-set-3/\[WLU-F24-DATA100\] Assignment 03-Part 01.Rmd'
+      - 'R/Pt-1-Data-set-4/\[WLU-F24-DATA100\] Assignment 03-Part 01.Rmd'
+      - 'R/Pt-1-Data-set-5/\[WLU-F24-DATA100\] Assignment 03-Part 01.Rmd'
 
 jobs:
   test:
