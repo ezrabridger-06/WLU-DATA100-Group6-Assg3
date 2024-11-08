@@ -42,7 +42,7 @@ jobs:
 
       - name: Run ottr Tests and Publish Report
         run: |
-          Rscript -e "library(ottr); library(tinytest); library(testthat); library(dplyr); library(readr); test_dir('[WLU-F24-DATA100] Assignment 03-Part 01.Rmd'); ottr::publish_report(file = 'ottr_report.html')"
+          Rscript -e "library(ottr); library(tinytest); library(testthat); library(dplyr); library(readr); test_dir('Assignment 03-Part 01.Rmd'); ottr::publish_report(file = 'ottr_report.html')"
         if: ${{ always() }} # Always run this step, even if previous steps fail
 
       - name: Upload Report Artifact
