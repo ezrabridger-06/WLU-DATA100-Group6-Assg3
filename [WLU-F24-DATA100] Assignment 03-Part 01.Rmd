@@ -77,17 +77,17 @@ at_cyclone <- str_c(cyclone_data_address, at_cyclone_filename, sep = "") |>
     separate_wider_position(
         BasinNumberYear,
         # Specify the widths
-        widths=c("Basin"=2, "Number"=2, "NameYear"=4)
+        widths=c("Basin" = 2, "Number" = 2, "NameYear" = 4)
     ) |>
     separate_wider_position(
         `1`,
         # Specify the widths
-        widths = c("ObservYear"=4, "Month"=2, "Day"=2)
+        widths = c("ObservYear" = 4, "Month" = 2, "Day" = 2)
     ) |>
     separate_wider_position(
         `2`,
         # Specify the widths
-        widths = c("Hour"=2, "Minute"=2)
+        widths = c("Hour" = 2, "Minute" = 2)
     ) |>
     rename(
         Identifier = `3`
