@@ -16,7 +16,7 @@ _(Extracted from the template Rmd files)_
 
 This file will be submitted as an Rmd file to GradeScope. You will need to create a group on GradeScope with the correct members. *If the person who submits this does not list you, you will not get a grade on this assignment!!!* Make sure you trust the person who is submitting it!
 
-## Overview
+### Overview
 
 This is **Part 1** of the group assignment, in which you'll demonstrate your ability to clean the data sets.
 
@@ -35,13 +35,13 @@ Once you've completed the relevant sections, you will have the following files i
 
 # PART 2
 
-## Important
+### Important
 
 You **must** be in a group in MyLS in order to see the DropBox used for submission. Even if you're alone, you must join a group by yourself.
 
 You **must** be in a group with people from the same section as you. MyLS does not allow for groups including students from both Data100A and Data100B.
 
-## Instructions
+### Instructions
 
 You are encouraged to remove this instruction section prior to submission.
 
@@ -51,11 +51,11 @@ Note that all of the code is *hidden* by default. This file will be graded based
 
 You will only submit the PDF version of this document. To knit to PDF, you'll need to run `install.packages("tinytex")` in the console, followed by `tinytex::install_tinytex()` (DO NOT PUT THESE COMMANDS IN AN RMD FILE!!!). If you encounter errors in "Knit to PDF", you can "knit to html" and then print the html file to PDF using your operating system's PDF view (e.g. Adobe Acrobat). Only standalone PDF files will be accepted by MyLS.
 
-## References
+### References
 
 I am not strict about MLA or APA style or anything like that. For this report, I would much rather have your citations be easy to match to your insights.
 
-The easiest way is to use Rmd's `[footnote](https://bookdown.org/yihui/rmarkdown/markdown-syntax.html#inline-formatting)` syntax. This will put a number beside the word where the footnote appears, and the full text of the footnote at the bottom of the page (pdf) or end of the document (html). The syntax is: ^[See the source view to see this footnote], where I suggest that you put in something like this ^[The relevance to the insight is ... . From <<name of source and name of article>>, published on <<date>>, url: <<link to page>>] to make references for this assignment.
+The easiest way is to use Rmd's `[footnote](https://bookdown.org/yihui/rmarkdown/markdown-syntax.html#inline-formatting)` syntax. This will put a number beside the word where the footnote appears, and the full text of the footnote at the bottom of the page (pdf) or end of the document (html). The syntax is: `^[See the source view to see this footnote]`, where I suggest that you put in something like this `^[The relevance to the insight is ... . From <<name of source and name of article>>, published on <<date>>, url: <<link to page>>]` to make references for this assignment.
 
 Alternatively, you could make a list of citations with their main arguments and why they're relevent to your insights, methods, etc.
 
