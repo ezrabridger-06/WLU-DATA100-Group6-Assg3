@@ -1,4 +1,4 @@
-# GROUP NOTE: 
+# GROUP NOTE
 - For any lines with `# YOUR CODE HERE` in the Rmd file, please remove them when adding your code. Keep all other comments unless otherwise noted as well
 - Remember to not copy and paste the entire file on your side, as it might mess with the setup done here. Just copy the objects (`object_a <- ...`) that you did
 - When adding your code/editing the file, select the respective branch (e.g. Pt-1-Data-set-1) from the branch list on the top left
