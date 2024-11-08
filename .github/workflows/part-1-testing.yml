@@ -47,16 +47,11 @@ jobs:
             any::dplyr
             any::readr
           needs: check
-      
-      - name: Run ottr Tests and Publish Report
-        run: |
-          Rscript -e "library(ottr); library(tinytest); library(testthat); library(dplyr); library(readr)"
-        if: ${{ always() }} # Always run this step, even if previous steps fail
 
       - name: Get current directory
         run: pwd
 
-      - name: Run Tests
+      - name: Run Tests and Get Report
         run: Rscript -e "test_dir('./tests'); ottr::publish_report(file = 'ottr_report.html')"
 
       - name: Upload Report Artifact
