@@ -11,7 +11,7 @@
     + Add details and click _Create pull request_ so we can go in to discuss and still be able to further edit that part
 
 
-_(Extracted from the template Rmd files)_
+_(Instruction details below extracted from the template Rmd files)_
 # PART 1
 
 This file will be submitted as an Rmd file to GradeScope. You will need to create a group on GradeScope with the correct members. *If the person who submits this does not list you, you will not get a grade on this assignment!!!* Make sure you trust the person who is submitting it!
