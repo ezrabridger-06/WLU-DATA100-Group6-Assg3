@@ -37,13 +37,27 @@ jobs:
           r-version: '4.4.1' # Latest version
 
       - name: Install Dependencies
-        run: |
-          Rscript -e "install.packages(c('ottr', 'tinytest', 'testthat', 'dplyr', 'readr'), repos = 'https://cran.rstudio.com/')"
-
+        uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          cache-version: 2
+          extra-packages: |
+            any::ottr
+            any::tinytest
+            any::testthat
+            any::dplyr
+            any::readr
+          needs: check
+      
       - name: Run ottr Tests and Publish Report
         run: |
-          Rscript -e "library(ottr); library(tinytest); library(testthat); library(dplyr); library(readr); test_dir('tests'); ottr::publish_report(file = 'ottr_report.html')"
+          Rscript -e "library(ottr); library(tinytest); library(testthat); library(dplyr); library(readr)"
         if: ${{ always() }} # Always run this step, even if previous steps fail
+
+      - name: Get current directory
+        run: pwd
+
+      - name: Run Tests
+        run: Rscript -e "test_dir('./tests'); ottr::publish_report(file = 'ottr_report.html')"
 
       - name: Upload Report Artifact
         uses: actions/upload-artifact@v4
