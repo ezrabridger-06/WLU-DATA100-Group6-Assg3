@@ -5,7 +5,11 @@
 name: ottr Tests
 on:
   push:
+    branches:
+      - 'R/*'
   pull_request:
+    branches:
+      - 'R/*'
 
 jobs:
   test:
@@ -24,7 +28,17 @@ jobs:
         run: |
           Rscript -e "install.packages(c('ottr', 'tinytest', 'testthat'), repos = 'https://cloud.r-project.org/')"
 
-      - name: Run ottr Tests
+      - name: Run ottr Tests and Publish Report
         run: |
-          Rscript -e "library(ottr); library(tinytest); library(testthat); test_dir('tests')"
-        
+          Rscript -e "library(ottr); library(tinytest); library(testthat); test_dir('[WLU-F24-DATA100] Assignment 03-Part 01.Rmd'); ottr::publish_report(file = 'ottr_report.html')"
+        if: ${{ always() }} # Always run this step, even if previous steps fail
+
+      - name: Upload Report Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: ottr-report
+          path: ottr_report.html
+        if: ${{ steps.test.outputs.test-result == 'success' }} # Only upload if tests pass
+
+    outputs:
+      test-result: ${{ steps.test.conclusion }}
