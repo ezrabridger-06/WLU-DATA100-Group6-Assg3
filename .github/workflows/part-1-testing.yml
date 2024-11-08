@@ -26,7 +26,7 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          Rscript -e "install.packages(c('ottr', 'tinytest', 'testthat'), repos = 'https://cloud.r-project.org/')"
+          Rscript -e "install.packages(c('ottr', 'tinytest', 'testthat', 'dplyr', 'readr'), repos = 'https://cloud.r-project.org/')"
 
       - name: Run ottr Tests and Publish Report
         run: |
