@@ -4,7 +4,7 @@
 - When adding your code/editing the file, select the respective branch (e.g. Pt-1-Data-set-1) from the branch list on the top left
     + Pt-1-General and Pt-2-General are for non-R code or misc changes to the files
     + After adding/editing, press _Commit changes_ on the top right, keep the _Commit message_ short (use _Extended description_ if needed) and leave the _Commit directly to the `<name>` branch selected_
-- If you write the parquet and have the file on your computer, upload it to the root folder in that branch (same one as the Rmd file).
+- If you write the parquet and have the file on your computer, upload it to the Assignment Sources folder in that branch.
 - If you are stuck or need help in the middle of your code:
     + Edit and commit as above then on the branch page
     + Click on _Compare and pull request_ on the yellow banner on top
